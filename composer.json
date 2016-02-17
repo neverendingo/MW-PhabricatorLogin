@@ -1,0 +1,9 @@
+{
+    "name": "mediawiki/phabricatorlogin",
+    "description": "Allow users to login to MediaWiki with Phabricator",
+    "license": "MIT",
+    "version": "0.0.1",
+    "require": {
+        "league/oauth2-client": "^1.3"
+    }
+}

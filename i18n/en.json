@@ -1,0 +1,9 @@
+{
+    "@metadata": {
+        "authors": [
+            "Ingo Malchow"
+        ]
+    },
+    "phabricatorlogin-desc": "Enables OAuth2 Login over a Phabricator OAuth2 Server",
+    "phabricatorlogin-header-link-text": "Login to Phabricator"
+}

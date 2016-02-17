@@ -1,0 +1,37 @@
+{
+	"name": "PhabricatorLogin",
+	"version": "0.0.1",
+	"author": [
+		"Ingo Malchow"
+	],
+	"url": "",
+	"descriptionmsg": "phabricatorlogin-desc",
+	"license-name": "MIT",
+	"type": "specialpage",
+	"ExtensionMessagesFiles": {
+		"PhabricatorLoginAlias": "PhabricatorLogin.alias.php"
+	},
+	"MessagesDirs": {
+		"PhabricatorLogin": [
+			"i18n"
+		]
+	},
+	"Hooks": {
+		"PersonalUrls": [
+                    "PhabricatorLoginHooks::onPersonalUrls"
+		],
+		"UserLogout": [
+                    "PhabricatorLoginHooks::onUserLogout"
+		]
+	},
+	"SpecialPages": {
+		"PhabricatorLogin": "SpecialPhabricatorLogin"
+	},
+	"AutoloadClasses": {
+		"SpecialPhabricatorLogin": "SpecialPhabricatorLogin.php",
+		"PhabricatorLoginHooks": "PhabricatorLogin.hooks.php",
+		"PhabricatorProvider": "includes/PhabricatorProvider.php",
+		"PhabricatorResourceOwner": "includes/PhabricatorResourceOwner.php"
+	},
+	"manifest_version": 1
+}
