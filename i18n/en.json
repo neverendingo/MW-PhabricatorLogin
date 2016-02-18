@@ -4,6 +4,8 @@
             "Ingo Malchow"
         ]
     },
+    "phabricatorlogin": "Login with Phabricator",
     "phabricatorlogin-desc": "Enables OAuth2 Login over a Phabricator OAuth2 Server",
-    "phabricatorlogin-header-link-text": "Login to Phabricator"
+    "phabricatorlogin-header-link-text": "Login to Phabricator",
+    "phabricatorlogin-login-with-phab": "You can login to this Wiki with your Phabricator Account"
 }

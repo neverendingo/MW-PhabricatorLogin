@@ -137,7 +137,13 @@ class SpecialPhabricatorLogin extends SpecialPage
      * No idea yet what to do here
      */
     private function _default() {
-        $out = "I'm being viewed as a Special Page";
-	$this->getOutput()->addWikiText( $out );
+        global $wgUser;
+        
+        $output = $this->getOutput();
+        
+        $output->setPageTitle( wfMessage('phabricatorlogin-header-link-text')->text() );
+        if ( !$wgUser->isLoggedIn() ) {
+            $output->addWikiMsg( 'phabricatorlogin-login-with-phab' );
+        }
     }
 }

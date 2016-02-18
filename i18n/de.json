@@ -4,6 +4,7 @@
             "Ingo Malchow"
         ]
     },
+    "phabricatorlogin": "&Uuml;ber Phabricator einloggen",
     "phabricatorlogin-desc": "Ermöglicht einen OAuth2 Login über einen Phabricator OAuth2 Server",
     "phabricatorlogin-header-link-text": "Einloggen &uuml;ber Phabricator"
 }
