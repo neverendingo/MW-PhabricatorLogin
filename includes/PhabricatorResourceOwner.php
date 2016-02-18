@@ -43,7 +43,7 @@ class PhabricatorResourceOwner implements ResourceOwnerInterface
      */
     public function getId()
     {
-        return $this->response['id'] ?: null;
+        return $this->response['result']['phid'] ?: null;
     }
     /**
      * Get resource owner email
@@ -52,7 +52,7 @@ class PhabricatorResourceOwner implements ResourceOwnerInterface
      */
     public function getEmail()
     {
-        return $this->response['email'] ?: null;
+        return $this->response['result']['primaryEmail'] ?: null;
     }
     /**
      * Get resource owner name
@@ -61,7 +61,7 @@ class PhabricatorResourceOwner implements ResourceOwnerInterface
      */
     public function getName()
     {
-        return $this->response['name'] ?: null;
+        return $this->response['result']['realName'] ?: null;
     }
     /**
      * Get resource owner nickname
@@ -70,7 +70,7 @@ class PhabricatorResourceOwner implements ResourceOwnerInterface
      */
     public function getNickname()
     {
-        return $this->response['login'] ?: null;
+        return $this->response['result']['userName'] ?: null;
     }
     /**
      * Get resource owner url
