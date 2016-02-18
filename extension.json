@@ -22,6 +22,9 @@
 		],
 		"UserLogout": [
                     "PhabricatorLoginHooks::onUserLogout"
+		],
+		"LoadExtensionSchemaUpdates": [
+                    "PhabricatorLoginHooks::onLoadExtensionSchemaUpdates"
 		]
 	},
 	"SpecialPages": {

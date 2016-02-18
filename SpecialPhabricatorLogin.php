@@ -14,10 +14,9 @@ class SpecialPhabricatorLogin extends SpecialPage
         
         parent::__construct( 'PhabricatorLogin', 'phabricatorlogin' );
         
-        global $wgPhabLogin, $wgScriptPath;
-        global $wgServer, $wgArticlePath;
+        global $wgPhabLogin, $wgServer, $wgArticlePath;
 
-        $this->client = new \League\OAuth2\Client\Provider\PhabricatorProvider(
+        $this->client = new League\OAuth2\Client\Provider\PhabricatorProvider(
             $wgPhabLogin['baseurl'],
             [
                 'clientId'      => $wgPhabLogin['clientid'],
@@ -30,8 +29,8 @@ class SpecialPhabricatorLogin extends SpecialPage
     
     public function execute( $parameter ){
         
-        session_start();
         $this->setHeaders();
+        wfSetupSession();;
         
         switch($parameter){
             case 'redirect':
@@ -77,7 +76,7 @@ class SpecialPhabricatorLogin extends SpecialPage
             // Check given state against previously stored one to mitigate CSRF attack
         } elseif (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) {
             unset($_SESSION['oauth2state']);
-            exit('Invalid state');
+            $this->getOutput()->addWikiText('Invalid state');
         }
     }
     
@@ -104,11 +103,24 @@ class SpecialPhabricatorLogin extends SpecialPage
                 // resource owner.
                 $resourceOwner = $this->client->getResourceOwner($accessToken);
                 
-                //$resourceOwner = $resourceOwner->toArray();
-                
                 $user = $this->_userHandling( $resourceOwner );
-		//$user->setCookies();
-		
+                $user->setCookies();
+
+                if( $user->getRegistration() > wfTimestamp( TS_MW ) - 1 ) {
+                    $this->getOutput()->redirect(SpecialPage::getTitleFor('Preferences')->getLinkUrl());
+                } else {
+                    $title = null;
+                    if( isset( $_SESSION['returnto'] ) ) {
+                        $title = Title::newFromText( $_SESSION['returnto'] );
+                        unset( $_SESSION['returnto'] );
+                    }
+
+                    if( !$title instanceof Title || 0 > $title->mArticleID ) {
+                        $title = Title::newMainPage();
+                    }
+                    $this->getOutput()->redirect( $title->getFullURL() );
+                }
+            
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
 
                 // Failed to get the access token or user details.
@@ -126,11 +138,54 @@ class SpecialPhabricatorLogin extends SpecialPage
      */
     protected function _userHandling( $resourceOwner ) {
         global $wgPhabLogin, $wgAuth;
+        $user = $this->getUser();
         
         $oauthId = $resourceOwner->getId();
         $oauthName = $resourceOwner->getName();
         $oauthNickname = $resourceOwner->getNickname();
         $oauthEmail = $resourceOwner->getEmail();
+        
+        // construct our own Identifier
+        $externalId = $wgPhabLogin['clientid'] . "." . $oauthId;
+        
+        $dbr = wfGetDB( DB_SLAVE );
+        $row = $dbr->selectRow(
+            'external_user',
+            '*',
+            array( 'eu_external_id' => $externalId )
+        );
+        if( $row ) {
+            // existing OAuth2 user
+            return User::newFromId( $row->eu_local_id );
+        }
+        
+        if( false === $user || $user->getId() != 0 ) {
+            throw new MWException('Unable to create new user account, please contact the Wiki administrator');
+        }
+        
+        $counter = 1;
+        $success = false; 
+        // TODO: replace with a search for an existing account with same name
+        while( !$success && $counter <= 1000 ) {
+            $checkName = $oauthNickname . ( $counter > 1 ? ' ' . $counter : '' );
+            $user = User::newFromName( $checkName, 'creatable' );
+            $counter ++;
+            $success = (false !== $user && $user->getId() == 0);
+        }
+        $user->setRealName($oauthName);
+        if( strlen($oauthEmail) > 0 ) {
+            $user->setEmail($oauthEmail);
+        }
+        $user->addToDatabase();
+        
+        $dbw = wfGetDB( DB_MASTER );
+        $dbw->replace( 'external_user',
+            array( 'eu_local_id', 'eu_external_id' ),
+            array( 'eu_local_id' => $user->getId(),
+            'eu_external_id' => $externalId ),
+            __METHOD__ );
+
+        return $user;
     }
     
     /**

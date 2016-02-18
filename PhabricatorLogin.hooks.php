@@ -43,4 +43,24 @@ class PhabricatorLoginHooks {
         
         return true;
     }
+    
+    public static function onLoadExtensionSchemaUpdates( $updater = null ) {
+        switch ( $updater->getDB()->getType() ) {
+            case "mysql":
+                return self::MySQLSchemaUpdates( $updater );
+            default:
+                throw new MWException("PhabricatorLogin does not support {$updater->getDB()->getType()} yet.");
+        }
+    }
+    
+    /**
+     * @param $updater MysqlUpdater
+     * @return bool
+     */
+    public static function MySQLSchemaUpdates( $updater = null ) {
+        $updater->addExtensionTable( 'external_user',
+            dirname( __FILE__ ) . '/sql/phabricator-login.sql' );
+
+        return true;
+    }
 }
