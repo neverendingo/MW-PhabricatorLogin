@@ -49,6 +49,9 @@ class SpecialPhabricatorLogin extends SpecialPage
         }
     }
     
+    /**
+     * Redirect to the Phabricator Instance
+     */
     private function _redirect() {
 
         global $wgRequest;
@@ -78,6 +81,9 @@ class SpecialPhabricatorLogin extends SpecialPage
         }
     }
     
+    /**
+     * When coming back from Phabricator the data is prepared here
+     */
     private function _handleCallback() {
         global $wgPhabLogin, $wgRequest;
         try {
@@ -112,12 +118,24 @@ class SpecialPhabricatorLogin extends SpecialPage
 
     }
     
+    /**
+     * Handle user login/verification
+     *
+     * @param  PhabricatorResourcOwner $resourceOwner
+     * @return object
+     */
     protected function _userHandling( $resourceOwner ) {
-        wfDebug( '<<<<<< User Data >>>>>>>>>>>' );
-        wfDebug( print_r( $resourceOwner->getNickname(), true ) );
-        wfDebug( print_r( $_SESSION, true ) );
+        global $wgPhabLogin, $wgAuth;
+        
+        $oauthId = $resourceOwner->getId();
+        $oauthName = $resourceOwner->getName();
+        $oauthNickname = $resourceOwner->getNickname();
+        $oauthEmail = $resourceOwner->getEmail();
     }
     
+    /**
+     * No idea yet what to do here
+     */
     private function _default() {
         $out = "I'm being viewed as a Special Page";
 	$this->getOutput()->addWikiText( $out );
