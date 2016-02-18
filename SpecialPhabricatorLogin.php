@@ -95,14 +95,18 @@ class SpecialPhabricatorLogin extends SpecialPage
                 // Using the access token, we may look up details about the
                 // resource owner.
                 $resourceOwner = $this->client->getResourceOwner($accessToken);
-
-                var_export($resourceOwner->toArray());
-
+                
+                $resourceOwner = $resourceOwner->toArray();
+                
                 $request = $this->client->getAuthenticatedRequest(
                     'GET',
                     $wgPhabLogin['api_endpoint'],
                     $accessToken
                 );
+                
+                $user = $this->_userHandling( $resourceOwner );
+		//$user->setCookies();
+		
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
 
                 // Failed to get the access token or user details.
@@ -110,6 +114,12 @@ class SpecialPhabricatorLogin extends SpecialPage
 
             }
 
+    }
+    
+    protected function _userHandling( $resourceOwner ) {
+        wfDebug( '<<<<<< User Data >>>>>>>>>>>' );
+        wfDebug( print_r( $resourceOwner, true ) );
+        wfDebug( print_r( $_SESSION, true ) );
     }
     
     private function _default() {
