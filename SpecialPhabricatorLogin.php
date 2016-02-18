@@ -29,6 +29,8 @@ class SpecialPhabricatorLogin extends SpecialPage
     }
     
     public function execute( $parameter ){
+        
+        session_start();
         $this->setHeaders();
         
         switch($parameter){
@@ -96,13 +98,7 @@ class SpecialPhabricatorLogin extends SpecialPage
                 // resource owner.
                 $resourceOwner = $this->client->getResourceOwner($accessToken);
                 
-                $resourceOwner = $resourceOwner->toArray();
-                
-                $request = $this->client->getAuthenticatedRequest(
-                    'GET',
-                    $wgPhabLogin['api_endpoint'],
-                    $accessToken
-                );
+                //$resourceOwner = $resourceOwner->toArray();
                 
                 $user = $this->_userHandling( $resourceOwner );
 		//$user->setCookies();
@@ -118,7 +114,7 @@ class SpecialPhabricatorLogin extends SpecialPage
     
     protected function _userHandling( $resourceOwner ) {
         wfDebug( '<<<<<< User Data >>>>>>>>>>>' );
-        wfDebug( print_r( $resourceOwner, true ) );
+        wfDebug( print_r( $resourceOwner->getNickname(), true ) );
         wfDebug( print_r( $_SESSION, true ) );
     }
     
