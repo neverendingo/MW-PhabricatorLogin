@@ -17,10 +17,10 @@ class PhabricatorLoginHooks {
         }
         
         // Remove account creation and normal login boxes
-        foreach ( array( 'createaccount', 'login', 'anonlogin' ) as $k ) {
-            if ( array_key_exists( $k, $personal_urls ) ) {
-                unset( $personal_urls[$k] );
-            }
+        unset( $personal_urls['createaccount'] );
+        unset( $personal_urls['anonlogin'] );
+        if ( $wgPhabLogin['phabonly'] === true ) {
+            unset( $personal_urls['login'] );
         }
 
         $personal_urls['anon_oauth_login'] = array(

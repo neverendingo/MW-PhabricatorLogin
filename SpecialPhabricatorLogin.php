@@ -10,11 +10,18 @@ class SpecialPhabricatorLogin extends SpecialPage
 {
     private $client;
     
+    // Allow only logins with Phabricator
+    private $phabOnlyLogin = false;
+    
     public function __construct() {
         
         parent::__construct( 'PhabricatorLogin', 'phabricatorlogin' );
         
         global $wgPhabLogin, $wgServer, $wgArticlePath;
+        
+        if( !$wgPhabLogin['phabonly'] === null ) {
+            $this->phabOnlyLogin = $wgPhabLogin['phabonly'];
+        }
 
         $this->client = new League\OAuth2\Client\Provider\PhabricatorProvider(
             $wgPhabLogin['baseurl'],
