@@ -4,3 +4,4 @@ composer.phar
 cache/*
 composer.lock
 .directory
+.project
