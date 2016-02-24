@@ -10,11 +10,12 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
  
-namespace League\OAuth2\Client\Provider;
+namespace MediaWiki\Extensions\PhabricatorLogin;
 
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/PhabricatorResourceOwner.php';
 
+use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;

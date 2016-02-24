@@ -1,6 +1,8 @@
-CREATE TABLE /*_*/external_user (
+CREATE TABLE /*_*/phab_user (
     eu_local_id int(10) unsigned NOT NULL PRIMARY KEY,
-    eu_external_id varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
+    eu_external_id varchar(255) NOT NULL,
+    eu_username varchar(255) binary NOT NULL,
+    eu_token varchar(255) NOT NULL,
+    eu_timestamp binary(14) not null default '',
     UNIQUE KEY eu_external_id (eu_external_id)
 ) /*wgDBTableOptions */;
-

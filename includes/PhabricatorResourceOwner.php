@@ -9,9 +9,11 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
  
-namespace League\OAuth2\Client\Provider;
+namespace MediaWiki\Extensions\PhabricatorLogin;
 
 require __DIR__ . '/../vendor/autoload.php';
+
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
 class PhabricatorResourceOwner implements ResourceOwnerInterface
 {

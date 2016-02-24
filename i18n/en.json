@@ -7,5 +7,12 @@
     "phabricatorlogin": "Login with Phabricator",
     "phabricatorlogin-desc": "Enables OAuth2 Login over a Phabricator OAuth2 Server",
     "phabricatorlogin-header-link-text": "Login to Phabricator",
-    "phabricatorlogin-login-with-phab": "You can login to this Wiki with your Phabricator Account"
+    "phabricatorlogin-login-with-phab": "You can login to this Wiki with your Phabricator Account",
+    "phabricator-chooseexisting": "Login to existing (local) account",
+    "phabricator-choosenew": "Create a new Account",
+    "phabricatorlogin-already-exists": "This Account already exists.<br/>Please go back and choose a different option.",
+    "phabricator-use-this": "Login",
+    "phabricatorlogin-successful": "The Login was successful!",
+    "phabricatorlogin-wrong-password": "Wrong credentials. <br/> Please go back and try again",
+    "phabricator-chooseinstructions": "Please enter your preferred username or choose an existing user to connect to your Phabricator account"
 }

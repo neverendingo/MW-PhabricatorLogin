@@ -34,7 +34,8 @@
 		"SpecialPhabricatorLogin": "SpecialPhabricatorLogin.php",
 		"PhabricatorLoginHooks": "PhabricatorLogin.hooks.php",
 		"PhabricatorProvider": "includes/PhabricatorProvider.php",
-		"PhabricatorResourceOwner": "includes/PhabricatorResourceOwner.php"
+		"PhabricatorResourceOwner": "includes/PhabricatorResourceOwner.php",
+		"PhabricatorUser": "includes/PhabricatorUser.php"
 	},
 	"manifest_version": 1
 }
