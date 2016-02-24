@@ -131,6 +131,7 @@ class SpecialPhabricatorLogin extends SpecialPage
             if ( 0 !== $extuser->getLocalId() ) {
             	if ( ! $accessToken->hasExpired() ) {
             		$user = User::newFromId( $extuser->getLocalId() );
+            		$extuser->setAccessToken( $accessToken->getToken() );
             		$extuser->updateInDatabase( wfGetDB( DB_MASTER ) );
             		$user->invalidateCache();
             		$user->setCookies();

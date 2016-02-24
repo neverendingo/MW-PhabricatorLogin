@@ -23,4 +23,6 @@ $wgPhabLogin['login-text'] = '<the login text>';
 $wgPhabLogin['phabonly'] = true; // Should core mw logins be disallowed?
 ```
 
+Run "php maintenance/update.php" to add the necessary table.
+
 [OAuth2 Client Library]: http://oauth2-client.thephpleague.com/

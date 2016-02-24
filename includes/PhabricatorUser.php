@@ -19,6 +19,7 @@ class PhabricatorUser
 		$this->userId = $userId;
 		$this->userName = $userName;
 		$this->timestamp = $timestamp;
+		$this->accessToken = $token;
 	}
 	
 	public static function newFromRemoteId( $remoteId, $userName, $token, $db ) {
