@@ -33,11 +33,11 @@ class PhabricatorUser
 		if ( !$row ) {
 			return new self( $remoteId, 0, $userName, $token );
 		} else {
-			return new self( $remoteId, $row->eu_local_id, $row->eu_username, $row->eu_token, $row->eu_timestamp );
+			return new self( $remoteId, $row->eu_local_id, $row->eu_username, $token, $row->eu_timestamp );
 		}
 	}
 	
-	public static function newFromName( \User $user, \DatabaseBase $db, $name, $token ) {
+	public static function newFromName( \User $user, $remoteId, $name, $token, $db ) {
 		$row = $db->selectRow(
 				'phab_user',
 				array( 'eu_external_id', 'eu_local_id', 'eu_username', 'eu_token', 'eu_timestamp' ),
@@ -48,7 +48,7 @@ class PhabricatorUser
 		if ( !$row ) {
 			return false;
 		} else {
-			return new self( $remoteId, $row->eu_local_id, $row->eu_username, $row->eu_token, $eu_timestamp );
+			return new self( $remoteId, $row->eu_local_id, $row->eu_username, $token, $eu_timestamp );
 		}
 	}
 	
