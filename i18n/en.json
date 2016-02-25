@@ -9,7 +9,7 @@
     "phabricatorlogin-header-link-text": "Login to Phabricator",
     "phabricatorlogin-login-with-phab": "You can login to this Wiki with your Phabricator Account",
     "phabricator-chooseexisting": "Login to existing (local) account",
-    "phabricator-choosenew": "Create a new Account",
+    "phabricator-choosenew": "New Wiki Display Name",
     "phabricatorlogin-already-exists": "This Account already exists.<br/>Please go back and choose a different option.",
     "phabricator-use-this": "Login",
     "phabricatorlogin-successful": "The Login was successful!",
