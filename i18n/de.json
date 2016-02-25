@@ -9,7 +9,7 @@
     "phabricatorlogin-header-link-text": "Einloggen &uuml;ber Phabricator",
     "phabricatorlogin-login-with-phab": "Sie k&ouml;nnen sich in dieses Wiki mit Ihrem Phabricator-Konto einloggen",
     "phabricator-chooseexisting": "In ein existierendes (lokales) Konto einloggen",
-    "phabricator-choosenew": "Ein neues Konto anlegen",
+    "phabricator-choosenew": "Neuer Wiki-Name",
     "phabricatorlogin-already-exists": "Dieses Konto existiert bereits.<br/>Bitte gehen Sie zur&uuml;ck und w&auml;hlen eine andere Option.",
     "phabricator-use-this": "Login",
     "phabricatorlogin-successful": "Der Login war erfolgreich!",
