@@ -194,6 +194,7 @@ class SpecialPhabricatorLogin extends SpecialPage
     	// The Phabricator User is new
     	} else if ( $request->getVal("wpNameChoice") === "new" ) {
     		$user = User::newFromName( $request->getVal("username_new") );
+    		// The given local user already exists
     		if ( 0 !== $user->getId() ) {
     			$out->addWikiMsg( 'phabricatorlogin-already-exists' );
     		} else {
@@ -204,7 +205,6 @@ class SpecialPhabricatorLogin extends SpecialPage
     			$user->addToDatabase();
     			$extuser = PhabricatorUser::newFromRemoteId($_SESSION['phid'], $_SESSION['external_name'], $_SESSION['phab_token'], $dbw );
     			$extuser->setLocalId($user->getId());
-    			$extuser->setAccessToken($_SESSION['phab_token']);
     			$extuser->setTimestamp(new \MWTimestamp());
     			$extuser->addToDatabase( $dbw );
     			$user->addNewUserLogEntry( 'create' );
