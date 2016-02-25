@@ -125,20 +125,17 @@ class SpecialPhabricatorLogin extends SpecialPage
             $externalId = $wgPhabLogin['clientid'] . "." . $oauthId;
             
             $dbr = wfGetDB( DB_SLAVE );
-            $extuser = PhabricatorUser::newFromRemoteId($externalId, $oauthNickname, $accessToken->getToken(), wfGetDB( DB_SLAVE ) );
+            $extuser = PhabricatorUser::newFromEmail($externalId, $oauthNickname, $oauthEmail, $accessToken->getToken(), wfGetDB( DB_SLAVE ) );
             
             // Phabricator User already exists
             if ( 0 !== $extuser->getLocalId() ) {
-            	if ( ! $accessToken->hasExpired() ) {
-            		$user = User::newFromId( $extuser->getLocalId() );
-            		$extuser->updateInDatabase( wfGetDB( DB_MASTER ) );
-            		$user->invalidateCache();
-            		$user->setCookies();
-            		$out->addWikiMsg( 'phabricatorlogin-successful' );
-            		return \Status::newGood( $user );
-            	} else {
-            		
-            	}
+            	$user = User::newFromId( $extuser->getLocalId() );
+            	$extuser->updateInDatabase( wfGetDB( DB_MASTER ) );
+            	$user->invalidateCache();
+            	$user->setCookies();
+            	$out->addWikiMsg( 'phabricatorlogin-successful' );
+            	return \Status::newGood( $user );
+            	
             // No Phabricator User yet
             } else {
             	$_SESSION['phid'] =  $externalId;
@@ -185,6 +182,7 @@ class SpecialPhabricatorLogin extends SpecialPage
     			$extuser->setLocalId($user->getId());
     			$extuser->setAccessToken( $_SESSION['phab_token'] );
     			$extuser->setTimestamp(new \MWTimestamp());
+    			$extuser->setEmail( $_SESSION['external_email'] );
     			$extuser->addToDatabase( $dbw );
     			$user->setCookies();
     			$out->addWikiMsg( 'phabricatorlogin-successful' );
