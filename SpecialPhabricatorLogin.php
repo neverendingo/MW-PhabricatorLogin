@@ -133,8 +133,8 @@ class SpecialPhabricatorLogin extends SpecialPage
             	$extuser->updateInDatabase( wfGetDB( DB_MASTER ) );
             	$user->invalidateCache();
             	$user->setCookies();
+            	
             	$out->addWikiMsg( 'phabricatorlogin-successful' );
-            	return \Status::newGood( $user );
             	
             // No Phabricator User yet
             } else {
