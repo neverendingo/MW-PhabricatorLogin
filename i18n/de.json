@@ -6,5 +6,13 @@
     },
     "phabricatorlogin": "&Uuml;ber Phabricator einloggen",
     "phabricatorlogin-desc": "Ermöglicht einen OAuth2 Login über einen Phabricator OAuth2 Server",
-    "phabricatorlogin-header-link-text": "Einloggen &uuml;ber Phabricator"
+    "phabricatorlogin-header-link-text": "Einloggen &uuml;ber Phabricator",
+    "phabricatorlogin-login-with-phab": "Sie k&ouml;nnen sich in dieses Wiki mit Ihrem Phabricator-Konto einloggen",
+    "phabricator-chooseexisting": "In ein existierendes (lokales) Konto einloggen",
+    "phabricator-choosenew": "Ein neues Konto anlegen",
+    "phabricatorlogin-already-exists": "Dieses Konto existiert bereits.<br/>Bitte gehen Sie zur&uuml;ck und w&auml;hlen eine andere Option.",
+    "phabricator-use-this": "Login",
+    "phabricatorlogin-successful": "Der Login war erfolgreich!",
+    "phabricatorlogin-wrong-password": "Falsche Zugangsdaten. <br/>Bitte gehen Sie zur&uuml;ck und versuchen es erneut",
+    "phabricator-chooseinstructions": "Bitte Ihren bevorzugten Benutzernamen eingeben oder<br/>w&auml;hlen Sie ein existierendes Konto zum Verkn&uuml;pfen"
 }

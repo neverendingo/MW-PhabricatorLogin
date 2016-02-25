@@ -8,7 +8,6 @@
     "phabricatorlogin-desc": "Enables OAuth2 Login over a Phabricator OAuth2 Server",
     "phabricatorlogin-header-link-text": "Login to Phabricator",
     "phabricatorlogin-login-with-phab": "You can login to this Wiki with your Phabricator Account",
-    "phabricator-chooseinstructions": "Do you want to link your Phabricator Account to an already existing account<br/>or do you want to create a new one?",
     "phabricator-chooseexisting": "Login to existing (local) account",
     "phabricator-choosenew": "Create a new Account",
     "phabricatorlogin-already-exists": "This Account already exists.<br/>Please go back and choose a different option.",
