@@ -184,6 +184,7 @@ class SpecialPhabricatorLogin extends SpecialPage
     			$extuser = PhabricatorUser::newFromRemoteId($_SESSION['phid'], $_SESSION['external_name'], $_SESSION['phab_token'], $dbw );
     			$extuser->setLocalId($user->getId());
     			$extuser->setAccessToken( $_SESSION['phab_token'] );
+    			$extuser->setTimestamp(new \MWTimestamp());
     			$extuser->addToDatabase( $dbw );
     			$user->setCookies();
     			$out->addWikiMsg( 'phabricatorlogin-successful' );
