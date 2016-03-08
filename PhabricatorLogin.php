@@ -17,5 +17,5 @@ if ( function_exists( 'wfLoadExtension' ) ) {
 
 	return true;
 } else {
-	die( 'This version of the PhabricatorLogin extension requires MediaWiki 1.25+' );
+	die( 'This version of the PhabricatorLogin extension requires MediaWiki 1.27+' );
 }
