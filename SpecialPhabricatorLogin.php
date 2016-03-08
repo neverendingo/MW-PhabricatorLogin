@@ -7,6 +7,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/includes/PhabricatorProvider.php';
 
+use MediaWiki\Session\SessionManager;
+
 class SpecialPhabricatorLogin extends SpecialPage 
 {
 	// save an instance of the oauth2 login
@@ -20,8 +22,10 @@ class SpecialPhabricatorLogin extends SpecialPage
     // Allow only logins with Phabricator
     private $phabOnlyLogin = false;
     
+    // save the returnto path
+    private $returnto = "";
+    
     public function __construct() {
-        
         parent::__construct( 'PhabricatorLogin', 'phabricatorlogin' );
         $this->listed = true;
         
@@ -42,13 +46,16 @@ class SpecialPhabricatorLogin extends SpecialPage
         
     }
     
+    public function doesWrites() {
+    	return true;
+    }
+    
     public function execute( $parameter ){
-    	$user = $this->getUser();
-    	$out = $this->getOutput();
-    	$request = $this->getRequest();
+    	    	
+    	$session = SessionManager::getGlobalSession();
+    	$session->persist();
         $this->setHeaders();
-        wfSetupSession();;
-        
+                        
         switch($parameter){
             case 'redirect':
                 $this->_redirect();
@@ -72,11 +79,15 @@ class SpecialPhabricatorLogin extends SpecialPage
      * Redirect to the Phabricator Instance
      */
     private function _redirect() {
-
+    	global $wgCookieExpiration;
+    	
         $request = $this->getRequest();
-                
+        
         if (!isset($_GET['code'])) {
 
+        	$this->returnto = $_GET['returnto'];
+        	$request->response()->setcookie("Phablogin", $this->returnto, time() + $wgCookieExpiration );
+        	
             // Fetch the authorization URL from the provider; this returns the
             // urlAuthorize option and generates and applies any necessary parameters
             // (e.g. state).
@@ -102,7 +113,7 @@ class SpecialPhabricatorLogin extends SpecialPage
      * When coming back from Phabricator, take care of the login
      */
     private function _handleCallback() {
-        global $wgPhabLogin;
+        global $wgPhabLogin, $wgUser;
         
         $out = $this->getOutput();
         $request = $this->getRequest();
@@ -122,6 +133,7 @@ class SpecialPhabricatorLogin extends SpecialPage
             $oauthNickname = $resourceOwner->getNickname();
             $oauthEmail = $resourceOwner->getEmail();
             
+            // the external id is formed from clientid + phid
             $externalId = $wgPhabLogin['clientid'] . "." . $oauthId;
             
             $dbr = wfGetDB( DB_SLAVE );
@@ -132,10 +144,13 @@ class SpecialPhabricatorLogin extends SpecialPage
             	$user = User::newFromId( $extuser->getLocalId() );
             	$extuser->updateInDatabase( wfGetDB( DB_MASTER ) );
             	$user->invalidateCache();
-            	$user->setCookies();
+            	$wgUser = $user;
+            	$this->getContext()->setUser( $user );
+            	$user->setCookies($request, $this->isSecure() ? true: false , true);
             	
             	$out->addWikiMsg( 'phabricatorlogin-successful' );
-            	
+            	$returnto = Title::newFromText($request->getcookie("Phablogin"));
+            	$out->addReturnTo($returnto);
             // No Phabricator User yet
             } else {
             	$_SESSION['phid'] =  $externalId;
@@ -170,6 +185,8 @@ class SpecialPhabricatorLogin extends SpecialPage
     }
 
     private function _finish() {
+    	global $wgUser;
+    	
     	$dbw = wfGetDB( DB_MASTER );
     	$out = $this->getOutput();
     	$request = $this->getRequest();
@@ -184,8 +201,12 @@ class SpecialPhabricatorLogin extends SpecialPage
     			$extuser->setTimestamp(new \MWTimestamp());
     			$extuser->setEmail( $_SESSION['external_email'] );
     			$extuser->addToDatabase( $dbw );
-    			$user->setCookies();
+    			$wgUser = $user;
+    			$this->getContext()->setUser( $user );
+    			$user->setCookies($request, $this->isSecure() ? true: false , true);
     			$out->addWikiMsg( 'phabricatorlogin-successful' );
+    			$returnto = Title::newFromText($request->getcookie("Phablogin"));
+    			$out->addReturnTo($returnto);
     		} else {
     			$out->addWikiMsg( 'phabricatorlogin-wrong-password' );
     		}
@@ -208,19 +229,24 @@ class SpecialPhabricatorLogin extends SpecialPage
     			$extuser->setEmail( $user->getEmail() );
     			$extuser->addToDatabase( $dbw );
     			$user->addNewUserLogEntry( 'create' );
-    			$user->setCookies();
-    			$out->redirect(SpecialPage::getTitleFor('Preferences')->getLinkUrl());
+    			$wgUser = $user;
+    			$this->getContext()->setUser( $user );
+    			$user->setOption( 'rememberpassword', $request->getVal("wpRemember") ? 1 : 0 );
+    			$user->setCookies($request, $this->isSecure() ? true: false , true);
+    			$returnto = Title::newFromText($request->getcookie("Phablogin"));
+            	$out->addReturnTo($returnto);
     		}
     	}
     
     }
     
     public function chooseAccount( $resourceOwner, $user ) {
-    	global $wgAuth, $wgHiddenPrefs, $wgScript;
+    	global $wgAuth, $wgHiddenPrefs, $wgScript, $wgCookieExpiration;
     	$user = $this->getUser();
     	$out = $this->getOutput();
     	$request = $this->getRequest();
     	
+    	$expirationDays = ceil( $wgCookieExpiration / ( 3600 * 24 ) );
     	// Check for a username in the cookies
     	global $wgCookiePrefix;
     	$name = '';
@@ -238,21 +264,28 @@ class SpecialPhabricatorLogin extends SpecialPage
     	$out->addHTML( Xml::openElement( 'div') );
 		$out->addHTML( Xml::radio( 'wpNameChoice', 'existing', !$def, array('id' => 'wpNameChoiceExisting') ) );
 		$out->addHTML( Xml::label( wfMessage( 'phabricator-chooseexisting' )->text(), 'wpNameChoiceExisting' ) . "<br />");
-    	$out->addHTML( Xml::element( 'input', array( 'name' => 'username_existing', 'type' => 'text', 'value' => '', 'placeholder' => $name ) ) );
+    	$out->addHTML( Xml::element( 'input', array( 'name' => 'username_existing', 'type' => 'text', 'value' => '' ) ) );
     	$out->addHTML( Xml::password( 'wpExistingPassword' ) );
     	$out->addHTML( Xml::closeElement( 'div') );
     	
     	$out->addHTML( Xml::openElement( 'div') );
     	$out->addHTML( Xml::radio( 'wpNameChoice', 'new', !$def, array('id' => 'wpNameChoiceNew') ) );
     	$out->addHTML( Xml::label( wfMessage( 'phabricator-choosenew' )->text(), 'wpNameChoiceNew' ) . "<br />");
-    	$out->addHTML( Xml::element( 'input', array( 'name' => 'username_new', 'type' => 'text', 'value' => '', 'width' => "50%" ) ) );
+    	$out->addHTML( Xml::element( 'input', array( 'name' => 'username_new', 'type' => 'text', 'value' => '', 'width' => "50%", 'placeholder' => $name ) ) );
     	
     	$out->addHTML( Xml::closeElement( 'div') );
+    	
+    	$out->addHTML( Xml::check('wpRemember', $user->getOption( 'rememberpassword' ) ? true: false ));
+    	$out->addHTML( Xml::label( wfMessage( 'remembermypassword' )->numParams( $expirationDays )->text(), 'wpRemember' ) . "<br />");
     	
 		$out->addHTML( Xml::submitButton( $this->msg( 'phabricator-use-this' )->text() ) );
     	$out->addHTML( Html::Hidden( 'phabricatorChooseNameBeforeLoginToken', LoginForm::getLoginToken() ) );
     	$out->addHTML( Xml::closeElement( 'form' ) );
     	$oauthAttributes = $resourceOwner->toArray();
     	$oauthAttributesNew = array();
+    }
+    
+    function isSecure() {
+    	return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
     }
 }
