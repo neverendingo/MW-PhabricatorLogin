@@ -29,7 +29,7 @@ class PhabricatorLoginHooks {
             'active' => false,
         );
         
-        $personal_urls['anon_oauth_login']['href'] = Skin::makeSpecialUrlSubpage( 'PhabricatorLogin', 'redirect' );
+        $personal_urls['anon_oauth_login']['href'] = Skin::makeSpecialUrlSubpage( 'PhabricatorLogin', 'redirect', 'returnto=' . $title->getPrefixedURL() );
                 
         if( isset( $personal_urls['anonlogin'] ) ) {
             $personal_urls['anonlogin']['href'] = Skin::makeSpecialUrl( 'Userlogin' );
