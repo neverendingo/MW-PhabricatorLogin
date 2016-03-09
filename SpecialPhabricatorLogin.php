@@ -231,7 +231,6 @@ class SpecialPhabricatorLogin extends SpecialPage
     			$user->addNewUserLogEntry( 'create' );
     			$wgUser = $user;
     			$this->getContext()->setUser( $user );
-    			$user->setOption( 'rememberpassword', $request->getVal("wpRemember") ? 1 : 0 );
     			$user->setCookies($request, $this->isSecure() ? true: false , true);
     			$returnto = Title::newFromText($request->getcookie("Phablogin"));
             	$out->addReturnTo($returnto);
